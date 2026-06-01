@@ -25,9 +25,9 @@ func NewClient() *Client {
 }
 
 type TestRequest struct {
-	BaseURL  string
-	APIKey   string
-	Model    string
+	BaseURL       string
+	APIKey        string
+	Model         string
 	HostAllowlist []string
 }
 
