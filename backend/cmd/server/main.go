@@ -18,6 +18,8 @@ import (
 	"github.com/YASSERRMD/sql-sage/backend/internal/middleware"
 	"github.com/YASSERRMD/sql-sage/backend/internal/repositories"
 	"github.com/YASSERRMD/sql-sage/backend/internal/services"
+	"github.com/YASSERRMD/sql-sage/backend/pkg/crypto"
+	"github.com/YASSERRMD/sql-sage/backend/pkg/llm"
 	"github.com/YASSERRMD/sql-sage/backend/pkg/logger"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -41,11 +43,24 @@ func main() {
 		os.Exit(1)
 	}
 
+	cipher, err := crypto.New(cfg.EncryptionKey)
+	if err != nil {
+		log.Error("cipher", "err", err)
+		os.Exit(1)
+	}
+
 	jwtSvc := auth.NewService(cfg)
 	userRepo := repositories.NewUserRepository(db)
 	rtRepo := repositories.NewRefreshTokenRepository(db)
+	providerRepo := repositories.NewProviderRepository(db)
+	llmClient := llm.NewClient()
+
 	authSvc := services.NewAuthService(userRepo, rtRepo, jwtSvc)
+	providerSvc := services.NewProviderService(providerRepo, cipher, llmClient, cfg.AllowedProviderHosts)
+
 	authH := api.NewAuthHandler(authSvc)
+	userH := api.NewUserHandler(db)
+	providerH := api.NewProviderHandler(providerSvc)
 
 	if cfg.AppEnv == "production" {
 		gin.SetMode(gin.ReleaseMode)
@@ -61,6 +76,8 @@ func main() {
 
 	v1 := r.Group("/api/v1")
 	authH.Register(v1, middleware.AuthRequired(jwtSvc))
+	userH.RegisterRoutes(v1, middleware.AuthRequired(jwtSvc))
+	providerH.Register(v1, middleware.AuthRequired(jwtSvc))
 
 	srv := &http.Server{
 		Addr:              fmt.Sprintf(":%d", cfg.HTTPPort),
