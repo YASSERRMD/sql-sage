@@ -138,6 +138,7 @@ export interface DashboardSummary {
   totalProcedures: number;
   totalFunctions: number;
   totalPackages: number;
+  highRisk: number;
   highRiskFindings: number;
   providerUsage: { providerId: string; providerName: string; count: number }[];
 }
