@@ -29,6 +29,7 @@ func (h *AnalysisHandler) Register(rg *gin.RouterGroup, authMW gin.HandlerFunc) 
 	g.GET("", h.list)
 	g.GET("/:id", h.get)
 	g.DELETE("/:id", h.delete)
+	g.GET("/:id/report", h.Report)
 }
 
 func (h *AnalysisHandler) create(c *gin.Context) {
