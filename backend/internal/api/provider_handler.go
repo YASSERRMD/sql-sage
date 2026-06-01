@@ -16,7 +16,9 @@ type ProviderHandler struct {
 	svc *services.ProviderService
 }
 
-func NewProviderHandler(s *services.ProviderService) *ProviderHandler { return &ProviderHandler{svc: s} }
+func NewProviderHandler(s *services.ProviderService) *ProviderHandler {
+	return &ProviderHandler{svc: s}
+}
 
 func (h *ProviderHandler) Register(rg *gin.RouterGroup, authMW gin.HandlerFunc) {
 	g := rg.Group("/providers", authMW)
