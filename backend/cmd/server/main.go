@@ -11,10 +11,16 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/YASSERRMD/sql-sage/backend/internal/api"
+	"github.com/YASSERRMD/sql-sage/backend/internal/auth"
 	"github.com/YASSERRMD/sql-sage/backend/internal/config"
 	"github.com/YASSERRMD/sql-sage/backend/internal/database"
+	"github.com/YASSERRMD/sql-sage/backend/internal/middleware"
+	"github.com/YASSERRMD/sql-sage/backend/internal/repositories"
+	"github.com/YASSERRMD/sql-sage/backend/internal/services"
 	"github.com/YASSERRMD/sql-sage/backend/pkg/logger"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func main() {
@@ -35,27 +41,26 @@ func main() {
 		os.Exit(1)
 	}
 
+	jwtSvc := auth.NewService(cfg)
+	userRepo := repositories.NewUserRepository(db)
+	rtRepo := repositories.NewRefreshTokenRepository(db)
+	authSvc := services.NewAuthService(userRepo, rtRepo, jwtSvc)
+	authH := api.NewAuthHandler(authSvc)
+
 	if cfg.AppEnv == "production" {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	r := gin.New()
 	r.Use(gin.Recovery(), requestLogger(log))
+	r.Use(middleware.NewRateLimiter(cfg.RateLimitPerMin).Middleware())
 
 	r.GET("/healthz", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
 	})
-	r.GET("/readyz", func(c *gin.Context) {
-		sqlDB, err := db.DB()
-		if err != nil {
-			c.JSON(http.StatusServiceUnavailable, gin.H{"status": "down"})
-			return
-		}
-		if err := sqlDB.PingContext(c.Request.Context()); err != nil {
-			c.JSON(http.StatusServiceUnavailable, gin.H{"status": "down"})
-			return
-		}
-		c.JSON(http.StatusOK, gin.H{"status": "ready"})
-	})
+	r.GET("/readyz", readyz(db))
+
+	v1 := r.Group("/api/v1")
+	authH.Register(v1, middleware.AuthRequired(jwtSvc))
 
 	srv := &http.Server{
 		Addr:              fmt.Sprintf(":%d", cfg.HTTPPort),
@@ -79,6 +84,21 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	_ = srv.Shutdown(ctx)
+}
+
+func readyz(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		sqlDB, err := db.DB()
+		if err != nil {
+			c.JSON(http.StatusServiceUnavailable, gin.H{"status": "down"})
+			return
+		}
+		if err := sqlDB.PingContext(c.Request.Context()); err != nil {
+			c.JSON(http.StatusServiceUnavailable, gin.H{"status": "down"})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"status": "ready"})
+	}
 }
 
 func requestLogger(log *slog.Logger) gin.HandlerFunc {
