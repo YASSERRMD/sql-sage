@@ -16,10 +16,10 @@ type ipBucket struct {
 }
 
 type RateLimiter struct {
-	mu       sync.Mutex
-	buckets  map[string]*ipBucket
-	limit    int
-	window   time.Duration
+	mu        sync.Mutex
+	buckets   map[string]*ipBucket
+	limit     int
+	window    time.Duration
 	idleEvict time.Duration
 }
 
