@@ -9,37 +9,37 @@ import (
 )
 
 type Config struct {
-	AppEnv             string
-	HTTPPort           int
-	DBHost             string
-	DBPort             int
-	DBUser             string
-	DBPassword         string
-	DBName             string
-	DBSSLMode          string
-	JWTSecret          string
-	JWTAccessTTL       time.Duration
-	JWTRefreshTTL      time.Duration
-	EncryptionKey      string
+	AppEnv               string
+	HTTPPort             int
+	DBHost               string
+	DBPort               int
+	DBUser               string
+	DBPassword           string
+	DBName               string
+	DBSSLMode            string
+	JWTSecret            string
+	JWTAccessTTL         time.Duration
+	JWTRefreshTTL        time.Duration
+	EncryptionKey        string
 	AllowedProviderHosts []string
-	RateLimitPerMin    int
-	LogLevel           string
+	RateLimitPerMin      int
+	LogLevel             string
 }
 
 func Load() (*Config, error) {
 	cfg := &Config{
-		AppEnv:        getEnv("APP_ENV", "development"),
-		HTTPPort:      getEnvInt("HTTP_PORT", 8080),
-		DBHost:        getEnv("DB_HOST", "localhost"),
-		DBPort:        getEnvInt("DB_PORT", 5432),
-		DBUser:        getEnv("DB_USER", "sage"),
-		DBPassword:    getEnv("DB_PASSWORD", "sage"),
-		DBName:        getEnv("DB_NAME", "sage"),
-		DBSSLMode:     getEnv("DB_SSLMODE", "disable"),
-		JWTSecret:     getEnv("JWT_SECRET", ""),
-		JWTAccessTTL:  time.Duration(getEnvInt("JWT_ACCESS_TTL_MIN", 15)) * time.Minute,
-		JWTRefreshTTL: time.Duration(getEnvInt("JWT_REFRESH_TTL_HOUR", 24*7)) * time.Hour,
-		EncryptionKey: getEnv("ENCRYPTION_KEY", ""),
+		AppEnv:               getEnv("APP_ENV", "development"),
+		HTTPPort:             getEnvInt("HTTP_PORT", 8080),
+		DBHost:               getEnv("DB_HOST", "localhost"),
+		DBPort:               getEnvInt("DB_PORT", 5432),
+		DBUser:               getEnv("DB_USER", "sage"),
+		DBPassword:           getEnv("DB_PASSWORD", "sage"),
+		DBName:               getEnv("DB_NAME", "sage"),
+		DBSSLMode:            getEnv("DB_SSLMODE", "disable"),
+		JWTSecret:            getEnv("JWT_SECRET", ""),
+		JWTAccessTTL:         time.Duration(getEnvInt("JWT_ACCESS_TTL_MIN", 15)) * time.Minute,
+		JWTRefreshTTL:        time.Duration(getEnvInt("JWT_REFRESH_TTL_HOUR", 24*7)) * time.Hour,
+		EncryptionKey:        getEnv("ENCRYPTION_KEY", ""),
 		AllowedProviderHosts: splitCSV(getEnv("ALLOWED_PROVIDER_HOSTS", "")),
 		RateLimitPerMin:      getEnvInt("RATE_LIMIT_PER_MIN", 60),
 		LogLevel:             getEnv("LOG_LEVEL", "info"),
