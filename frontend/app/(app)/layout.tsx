@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useMe } from "@/hooks/useAuth";
+import { Sidebar } from "@/components/Sidebar";
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -24,5 +25,10 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
   if (!user) {
     return null;
   }
-  return <>{children}</>;
+  return (
+    <div className="flex min-h-screen">
+      <Sidebar />
+      <main className="flex-1 p-6">{children}</main>
+    </div>
+  );
 }

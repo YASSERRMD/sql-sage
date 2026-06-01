@@ -66,6 +66,8 @@ func main() {
 	userH := api.NewUserHandler(db)
 	providerH := api.NewProviderHandler(providerSvc)
 	analysisH := api.NewAnalysisHandler(analysisSvc)
+	dashboardSvc := services.NewDashboardService(analysisRepo, providerRepo)
+	dashboardH := api.NewDashboardHandler(dashboardSvc)
 
 	if cfg.AppEnv == "production" {
 		gin.SetMode(gin.ReleaseMode)
@@ -84,6 +86,7 @@ func main() {
 	userH.RegisterRoutes(v1, middleware.AuthRequired(jwtSvc))
 	providerH.Register(v1, middleware.AuthRequired(jwtSvc))
 	analysisH.Register(v1, middleware.AuthRequired(jwtSvc))
+	dashboardH.Register(v1, middleware.AuthRequired(jwtSvc))
 
 	srv := &http.Server{
 		Addr:              fmt.Sprintf(":%d", cfg.HTTPPort),
