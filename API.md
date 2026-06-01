@@ -2,7 +2,7 @@
 
 Base URL: `/api/v1`
 
-All endpoints (except `/auth/login` and `/auth/refresh`) require a Bearer token.
+All endpoints (except `/auth/login`, `/auth/refresh`, `/auth/register`) require a Bearer token.
 
 ```
 Authorization: Bearer <access_token>
@@ -26,73 +26,108 @@ Authorization: Bearer <access_token>
 
 ## Authentication
 
-### POST /auth/login
-
-Request:
+### POST /auth/register
 
 ```json
-{
-  "email": "user@example.com",
-  "password": "string"
-}
+{ "name": "Jane", "email": "j@x.com", "password": "string" }
+```
+
+### POST /auth/login
+
+```json
+{ "email": "user@example.com", "password": "string" }
 ```
 
 Response `200`:
 
 ```json
-{
-  "accessToken": "string",
-  "refreshToken": "string",
-  "expiresIn": 900
-}
+{ "accessToken": "string", "refreshToken": "string", "expiresIn": 900 }
 ```
 
 ### POST /auth/refresh
-
-Request:
 
 ```json
 { "refreshToken": "string" }
 ```
 
-Response `200`: same as login.
-
 ### POST /auth/logout
 
-Invalidates the supplied refresh token.
+```json
+{ "refreshToken": "string" }
+```
 
 ### GET /auth/me
 
-Returns the authenticated user profile.
+Returns the authenticated user.
+
+### PATCH /users/me
+
+```json
+{ "name": "string" }
+```
 
 ## Providers
 
 ### GET /providers
+List providers for the current user.
+
 ### POST /providers
+```json
+{
+  "name": "OpenAI",
+  "baseUrl": "https://api.openai.com/v1",
+  "apiKey": "sk-...",
+  "modelName": "gpt-4o-mini",
+  "temperature": 0.2,
+  "maxTokens": 2048,
+  "isDefault": true
+}
+```
+
 ### GET /providers/{id}
 ### PUT /providers/{id}
 ### DELETE /providers/{id}
 ### POST /providers/{id}/test
+
+Response:
+```json
+{ "ok": true, "message": "ok", "latencyMs": 312 }
+```
+
 ### POST /providers/{id}/default
 
 ## Analyses
 
 ### POST /analyses
-### GET /analyses
+
+```json
+{
+  "objectName": "close_account",
+  "objectType": "procedure",
+  "sourceCode": "...",
+  "providerId": "optional"
+}
+```
+
+Returns the analysis with `result` containing the structured JSON.
+
+### GET /analyses?q=&objectType=&risk=&page=&pageSize=
+
 ### GET /analyses/{id}
 ### DELETE /analyses/{id}
 
-## Reports
-
 ### GET /analyses/{id}/report?format=md|html|pdf
+
+Streams Markdown or HTML. `pdf` currently returns 501.
 
 ## Dashboard
 
 ### GET /dashboard/summary
 ### GET /dashboard/trend
 ### GET /dashboard/risk-distribution
+### GET /dashboard/object-types
 
 ## Health
 
-### GET /healthz
-### GET /readyz
+### GET /healthz — liveness
+### GET /readyz — DB readiness
