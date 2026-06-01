@@ -8,14 +8,14 @@ import (
 )
 
 type Input struct {
-	ObjectName    string
-	ObjectType    string
-	Summary       string
-	MarkdownBody  string
-	Mermaid       string
-	CreatedAt     time.Time
-	Risk          string
-	TokensUsed    int
+	ObjectName   string
+	ObjectType   string
+	Summary      string
+	MarkdownBody string
+	Mermaid      string
+	CreatedAt    time.Time
+	Risk         string
+	TokensUsed   int
 }
 
 func Markdown(in Input) string {
