@@ -1,0 +1,4 @@
+DROP TABLE IF EXISTS refresh_tokens;
+DROP TABLE IF EXISTS analyses;
+DROP TABLE IF EXISTS providers;
+DROP TABLE IF EXISTS users;
