@@ -38,6 +38,10 @@ func (r *ProviderRepository) FindByID(ctx context.Context, userID, id uuid.UUID)
 	return &p, nil
 }
 
+func (r *ProviderRepository) Get(ctx context.Context, userID, id uuid.UUID) (*models.Provider, error) {
+	return r.FindByID(ctx, userID, id)
+}
+
 func (r *ProviderRepository) List(ctx context.Context, userID uuid.UUID) ([]models.Provider, error) {
 	var ps []models.Provider
 	if err := r.db.WithContext(ctx).Where("user_id = ?", userID).Order("is_default DESC, created_at DESC").Find(&ps).Error; err != nil {

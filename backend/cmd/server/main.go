@@ -11,6 +11,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/YASSERRMD/sql-sage/backend/internal/analysis"
 	"github.com/YASSERRMD/sql-sage/backend/internal/api"
 	"github.com/YASSERRMD/sql-sage/backend/internal/auth"
 	"github.com/YASSERRMD/sql-sage/backend/internal/config"
@@ -57,10 +58,14 @@ func main() {
 
 	authSvc := services.NewAuthService(userRepo, rtRepo, jwtSvc)
 	providerSvc := services.NewProviderService(providerRepo, cipher, llmClient, cfg.AllowedProviderHosts)
+	analysisRepo := repositories.NewAnalysisRepository(db)
+	engine := analysis.NewEngine(llmClient, cipher, providerRepo, analysisRepo)
+	analysisSvc := services.NewAnalysisService(engine, analysisRepo, providerSvc)
 
 	authH := api.NewAuthHandler(authSvc)
 	userH := api.NewUserHandler(db)
 	providerH := api.NewProviderHandler(providerSvc)
+	analysisH := api.NewAnalysisHandler(analysisSvc)
 
 	if cfg.AppEnv == "production" {
 		gin.SetMode(gin.ReleaseMode)
@@ -78,6 +83,7 @@ func main() {
 	authH.Register(v1, middleware.AuthRequired(jwtSvc))
 	userH.RegisterRoutes(v1, middleware.AuthRequired(jwtSvc))
 	providerH.Register(v1, middleware.AuthRequired(jwtSvc))
+	analysisH.Register(v1, middleware.AuthRequired(jwtSvc))
 
 	srv := &http.Server{
 		Addr:              fmt.Sprintf(":%d", cfg.HTTPPort),

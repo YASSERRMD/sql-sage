@@ -32,10 +32,10 @@ type ChatResponse struct {
 }
 
 type chatAPIRequest struct {
-	Model       string        `json:"model"`
-	Messages    []ChatMessage `json:"messages"`
-	Temperature float64       `json:"temperature"`
-	MaxTokens   int           `json:"max_tokens"`
+	Model          string        `json:"model"`
+	Messages       []ChatMessage `json:"messages"`
+	Temperature    float64       `json:"temperature"`
+	MaxTokens      int           `json:"max_tokens"`
 	ResponseFormat *struct {
 		Type string `json:"type"`
 	} `json:"response_format,omitempty"`
