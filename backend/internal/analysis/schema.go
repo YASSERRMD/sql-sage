@@ -12,19 +12,19 @@ var ErrInvalidJSON = errors.New("invalid json")
 var mermaidKeyword = regexp.MustCompile(`(?i)^(graph|flowchart)\s+(TD|LR|TB|RL|BT)?`)
 
 type Schema struct {
-	ObjectName                string   `json:"objectName"`
-	ObjectType                string   `json:"objectType"`
-	Summary                   string   `json:"summary"`
-	SimpleExplanation         string   `json:"simpleExplanation"`
-	ExecutionFlow             []string `json:"executionFlow"`
-	MermaidDiagram            string   `json:"mermaidDiagram"`
-	Tables                    []any    `json:"tables"`
-	Parameters                []any    `json:"parameters"`
-	BusinessRules             []any    `json:"businessRules"`
-	Risks                     []any    `json:"risks"`
-	PossibleBugs              []any    `json:"possibleBugs"`
-	ModernizationSuggestions  []any    `json:"modernizationSuggestions"`
-	MarkdownReport            string   `json:"markdownReport"`
+	ObjectName               string   `json:"objectName"`
+	ObjectType               string   `json:"objectType"`
+	Summary                  string   `json:"summary"`
+	SimpleExplanation        string   `json:"simpleExplanation"`
+	ExecutionFlow            []string `json:"executionFlow"`
+	MermaidDiagram           string   `json:"mermaidDiagram"`
+	Tables                   []any    `json:"tables"`
+	Parameters               []any    `json:"parameters"`
+	BusinessRules            []any    `json:"businessRules"`
+	Risks                    []any    `json:"risks"`
+	PossibleBugs             []any    `json:"possibleBugs"`
+	ModernizationSuggestions []any    `json:"modernizationSuggestions"`
+	MarkdownReport           string   `json:"markdownReport"`
 }
 
 func ValidateAndParse(raw string) (*Schema, error) {

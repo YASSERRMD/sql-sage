@@ -4,9 +4,9 @@ import "testing"
 
 func TestDeriveRisk(t *testing.T) {
 	cases := []struct {
-		name string
+		name  string
 		risks []any
-		want string
+		want  string
 	}{
 		{"empty", nil, "low"},
 		{"single", []any{map[string]any{"level": "high"}}, "high"},

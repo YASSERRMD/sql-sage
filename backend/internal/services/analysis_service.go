@@ -25,10 +25,10 @@ func NewAnalysisService(e *analysis.Engine, r *repositories.AnalysisRepository, 
 }
 
 type CreateAnalysisInput struct {
-	ObjectName string             `json:"objectName"`
-	ObjectType models.ObjectType  `json:"objectType"`
-	SourceCode string             `json:"sourceCode"`
-	ProviderID *uuid.UUID         `json:"providerId,omitempty"`
+	ObjectName string            `json:"objectName"`
+	ObjectType models.ObjectType `json:"objectType"`
+	SourceCode string            `json:"sourceCode"`
+	ProviderID *uuid.UUID        `json:"providerId,omitempty"`
 }
 
 func (s *AnalysisService) Create(ctx context.Context, userID uuid.UUID, in CreateAnalysisInput) (*models.Analysis, error) {
