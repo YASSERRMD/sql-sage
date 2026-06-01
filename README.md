@@ -12,11 +12,11 @@ SQL-Sage helps developers, architects, DBAs, auditors, and modernization teams u
 
 - **AI Analysis Engine** — LLM-powered explanations of procedures, functions, packages, triggers, views, and SQL scripts.
 - **Provider Agnostic** — Works with any OpenAI-compatible endpoint (OpenAI, OpenRouter, Groq, DeepSeek, vLLM, LM Studio, Ollama, LiteLLM, internal gateways).
-- **Secure by Design** — Encrypted API keys, JWT authentication, role-based access.
+- **Secure by Design** — Encrypted API keys (AES-GCM), JWT authentication, role-based access, SSRF allowlist for provider URLs.
 - **Workspace** — Monaco editor with syntax highlighting and paste-to-analyze flow.
 - **Visualizations** — Auto-generated Mermaid flowcharts, dependency tables, risk distribution charts.
-- **History & Reports** — Searchable analysis history with Markdown / HTML / PDF export.
-- **Dashboard** — Analytics, risk trends, provider usage, and high-risk findings.
+- **History & Reports** — Searchable analysis history with Markdown / HTML export (PDF stub).
+- **Dashboard** — Stats, recent analyses, provider list, risk totals.
 - **Dark / Light Mode** — Professional enterprise UI.
 
 ## Tech Stack
@@ -24,7 +24,7 @@ SQL-Sage helps developers, architects, DBAs, auditors, and modernization teams u
 | Layer       | Technology                                       |
 | ----------- | ------------------------------------------------ |
 | Frontend    | Next.js 15, TypeScript, Tailwind, shadcn/ui      |
-| Editor      | Monaco Editor, Mermaid.js                        |
+| Editor      | Monaco Editor                                    |
 | Backend     | Go 1.24+, Gin, GORM                              |
 | LLM Client  | OpenAI SDK compatible client                     |
 | Database    | PostgreSQL 17                                    |
@@ -36,6 +36,7 @@ SQL-Sage helps developers, architects, DBAs, auditors, and modernization teams u
 sql-sage/
 ├── backend/            # Go API server
 ├── frontend/           # Next.js application
+├── infra/nginx/        # Reverse proxy config
 ├── docker-compose.yml
 ├── ARCHITECTURE.md
 ├── API.md
@@ -46,7 +47,15 @@ sql-sage/
 
 ## Quick Start
 
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for full installation and deployment instructions.
+```bash
+cp .env.example .env
+docker compose up -d
+```
+
+- Frontend: http://localhost:3000
+- Backend:  http://localhost:8080
+
+Seed an admin and start analyzing. See [DEPLOYMENT.md](./DEPLOYMENT.md) for full instructions.
 
 ## Documentation
 
